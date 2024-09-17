@@ -1,6 +1,9 @@
 <template>
   <div class="chatroom">
-    <h1>聊天室</h1>
+    <div class="header">
+      <h1>聊天室</h1>
+      <button @click="logout" class="logout-button">登出</button>
+    </div>
     <div class="messages">
       <div
         v-for="(message, index) in messages"
@@ -54,6 +57,12 @@ export default {
         });
       }
     },
+    logout() {
+      // 清除本地存儲的使用者資料（如果有）
+      localStorage.removeItem('username');
+      // 導向登入頁面
+      this.$router.push('/login');
+    },
   },
 };
 </script>
@@ -65,8 +74,29 @@ export default {
   color: #ecf0f1;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 h1 {
   text-align: center;
+  flex: 1;
+}
+
+.logout-button {
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #34495e;
+  color: #ecf0f1;
+  border: none;
+  border-radius: 4px;
+}
+
+.logout-button:hover {
+  background-color: #3b5998;
 }
 
 .messages {
@@ -75,6 +105,7 @@ h1 {
   height: 400px;
   overflow-y: auto;
   margin-bottom: 10px;
+  border-radius: 8px;
 }
 
 .message {
@@ -101,15 +132,27 @@ h1 {
   flex: 1;
   padding: 10px;
   font-size: 16px;
+  border: none;
+  border-radius: 4px 0 0 4px;
 }
 
 .input-area button {
   padding: 10px;
   font-size: 16px;
   cursor: pointer;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  background-color: #34495e;
+  color: #ecf0f1;
 }
 
 .input-area button:hover {
-  background-color: #2c3e50;
+  background-color: #3b5998;
+}
+
+.input-area input:focus,
+.logout-button:focus,
+.input-area button:focus {
+  outline: none;
 }
 </style>
