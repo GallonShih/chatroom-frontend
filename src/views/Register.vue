@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'Register',
   data() {
@@ -31,9 +33,30 @@ export default {
     };
   },
   methods: {
-    register() {
-      // 模擬註冊功能
-      console.log('註冊中...', this.account, this.password, this.username);
+    async register() {
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_BACKEND_URL}/register`,
+          {
+            username: this.account,
+            password: this.password,
+            full_name: this.username,
+          }
+        );
+        if (response.status === 200) {
+          alert('註冊成功！');
+          this.$router.push('/login');
+        } else {
+          alert('註冊失敗，請重試。');
+        }
+      } catch (error) {
+        if (error.response && error.response.data && error.response.data.detail) {
+          alert(`註冊失敗：${error.response.data.detail}`);
+        } else {
+          alert('註冊失敗，請檢查您的網路連線或稍後再試。');
+        }
+        console.error('註冊錯誤：', error);
+      }
     },
     goToLogin() {
       this.$router.push('/login');
