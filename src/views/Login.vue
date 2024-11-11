@@ -38,7 +38,7 @@ export default {
 
       if (accessToken && tokenType) {
         try {
-          const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/user`, {
+          const response = await axios.get(`${this.$backendUrl}/user`, {
             headers: {
               Authorization: `${tokenType} ${accessToken}`,
             },
@@ -71,7 +71,7 @@ export default {
         params.append('client_secret', 'string');
 
         const response = await axios.post(
-          `${process.env.VUE_APP_BACKEND_URL}/login`,
+          `${this.$backendUrl}/login`,
           params
         );
 

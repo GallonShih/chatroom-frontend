@@ -36,7 +36,7 @@ export default {
     async register() {
       try {
         const response = await axios.post(
-          `${process.env.VUE_APP_BACKEND_URL}/register`,
+          `${this.$backendUrl}/register`,
           {
             username: this.account,
             password: this.password,

@@ -61,7 +61,7 @@ export default {
 
       if (accessToken && tokenType) {
         try {
-          const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/user`, {
+          const response = await axios.get(`${this.$backendUrl}/user`, {
             headers: {
               Authorization: `${tokenType} ${accessToken}`,
             },
@@ -86,7 +86,7 @@ export default {
       }
     },
     connectWebSocket() {
-      this.ws = new WebSocket(`${process.env.VUE_APP_BACKEND_WS_URL}/ws/chat/${this.currentUser}`);
+      this.ws = new WebSocket(`${this.$websocketUrl}/ws/chat/${this.currentUser}`);
 
       this.ws.onopen = () => {
         console.log('WebSocket 連線已建立');
@@ -117,7 +117,7 @@ export default {
           const tokenType = Cookies.get('token_type');
 
           await axios.post(
-            `${process.env.VUE_APP_BACKEND_URL}/chat`,
+            `${this.$backendUrl}/chat`,
             {
               user_id: JSON.parse(localStorage.getItem('userInfo')).id,
               message: this.newMessage.trim(),
