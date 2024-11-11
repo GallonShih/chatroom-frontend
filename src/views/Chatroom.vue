@@ -24,7 +24,9 @@
           type="text"
           v-model="newMessage"
           placeholder="輸入訊息..."
-          @keyup.enter="sendMessage"
+          @keyup.enter="handleEnter"
+          @compositionstart="isComposing = true"
+          @compositionend="handleCompositionEnd"
       />
       <button @click="sendMessage">送出</button>
     </div>
@@ -34,6 +36,7 @@
 <script>
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import _ from 'lodash';
 
 export default {
   name: 'Chatroom',
@@ -41,6 +44,7 @@ export default {
     return {
       currentUser: JSON.parse(localStorage.getItem('userInfo')).username || 'admin',
       newMessage: '',
+      isComposing: false, // 標記是否正在組合輸入（中文）
       messages: [],
       ws: null,
     };
@@ -55,6 +59,25 @@ export default {
     }
   },
   methods: {
+    // 處理組合輸入結束
+    handleCompositionEnd() {
+      this.isComposing = false;
+      this.compositionEnded = true; // 標記組合輸入剛剛結束
+    },
+
+    // 處理回車事件
+    handleEnter() {
+      // 如果組合輸入剛剛結束，等待下一次 Enter 才發送訊息
+      if (this.compositionEnded) {
+        this.compositionEnded = false; // 清除組合輸入結束標記
+        return;
+      }
+      // 僅在沒有處於組合輸入狀態時發送訊息
+      if (!this.isComposing) {
+        this.sendMessage();
+      }
+    },
+
     async checkAccessToken() {
       const accessToken = Cookies.get('access_token');
       const tokenType = Cookies.get('token_type');
@@ -110,7 +133,7 @@ export default {
         console.error('WebSocket 錯誤:', error);
       };
     },
-    async sendMessage() {
+    sendMessage: _.debounce(async function () {
       if (this.newMessage.trim() !== '') {
         try {
           const accessToken = Cookies.get('access_token');
@@ -149,7 +172,7 @@ export default {
           }
         }
       }
-    },
+    }, 200),
     logout() {
       Cookies.remove('access_token');
       Cookies.remove('token_type');
